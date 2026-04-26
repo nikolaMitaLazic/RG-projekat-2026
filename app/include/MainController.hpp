@@ -12,6 +12,16 @@ namespace app {
 
         bool loop() override;
 
+        void draw_hen();
+
+        void draw_tree();
+
+        void begin_draw() override;
+
+        void end_draw() override;
+
+        void draw() override;
+
     public:
         std::string_view name() const override {
             return "app::MainController";

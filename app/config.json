@@ -1,6 +1,14 @@
 {
   "resources": {
     "models": {
+      "hen": {
+        "path": "Hen/Mesh_Hen.obj",
+        "flip_uvs": true
+      },
+      "tree": {
+        "path": "Tree/model.obj",
+        "flip_uvs": true
+      }
     }
   },
   "window": {
