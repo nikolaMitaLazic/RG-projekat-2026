@@ -22,17 +22,27 @@ namespace app {
     void MainController::draw_hen() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto platform  = engine::core::Controller::get<engine::platform::PlatformController>();
 
         engine::resources::Model *hen     = resources->model("hen");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
         shader->set_mat4("view", graphics->camera()->view_matrix());
-        glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(-2.0f, 0.0f, -10.0f));
-        model           = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
-        shader->set_mat4("model", model);
 
+        float t         = platform->frame_time().current;
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, glm::vec3(-2.0f, -1.0f, -10.0f));
+        model           = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
+        model           = glm::rotate(model, -t, glm::vec3(0.0, 1.0, 0.0));
+        shader->set_mat4("model", model);
+        hen->draw(shader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.0f, -1.0f, -10.0f));
+        model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
+        model = glm::rotate(model, t, glm::vec3(0.0, 1.0, 0.0));
+        shader->set_mat4("model", model);
         hen->draw(shader);
     }
 
@@ -40,7 +50,7 @@ namespace app {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
-        engine::resources::Model *hen     = resources->model("tree");
+        engine::resources::Model *tree    = resources->model("tree");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
@@ -49,8 +59,7 @@ namespace app {
         model           = glm::translate(model, glm::vec3(0.0f, -2.0f, -10.0f));
         model           = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
         shader->set_mat4("model", model);
-
-        hen->draw(shader);
+        tree->draw(shader);
     }
 
     void MainController::begin_draw() {
