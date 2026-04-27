@@ -6,7 +6,19 @@
 #include <spdlog/spdlog.h>
 
 namespace app {
+    class MainPlatformEventObserver : public engine::platform::PlatformEventObserver {
+    public:
+        void on_mouse_move(engine::platform::MousePosition position) override;
+    };
+
+    void MainPlatformEventObserver::on_mouse_move(engine::platform::MousePosition position) {
+        auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+        camera->rotate_camera(position.dx, position.dy);
+    }
+
     void MainController::initialize() {
+        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+        platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
         spdlog::info("MainController: Successful initialization!");
         engine::graphics::OpenGL::enable_depth_testing();
     }
@@ -17,6 +29,28 @@ namespace app {
             return false;
         else
             return true;
+    }
+
+    void MainController::update_camera() {
+        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+        auto camera   = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+        float dt      = platform->dt();
+        if (platform->key(engine::platform::KEY_W).state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::FORWARD, dt);
+        }
+        if (platform->key(engine::platform::KEY_S).state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::BACKWARD, dt);
+        }
+        if (platform->key(engine::platform::KEY_A).state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::LEFT, dt);
+        }
+        if (platform->key(engine::platform::KEY_D).state() == engine::platform::Key::State::Pressed) {
+            camera->move_camera(engine::graphics::Camera::Movement::RIGHT, dt);
+        }
+    }
+
+    void MainController::update() {
+        update_camera();
     }
 
     void MainController::draw_hen() {
@@ -32,14 +66,14 @@ namespace app {
 
         float t         = platform->frame_time().current;
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(-2.0f, -1.0f, -10.0f));
+        model           = glm::translate(model, glm::vec3(-2.0f, 1.0f, -1.0f));
         model           = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
         model           = glm::rotate(model, -t, glm::vec3(0.0, 1.0, 0.0));
         shader->set_mat4("model", model);
         hen->draw(shader);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, -1.0f, -10.0f));
+        model = glm::translate(model, glm::vec3(2.0f, 1.0f, -1.0f));
         model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
         model = glm::rotate(model, t, glm::vec3(0.0, 1.0, 0.0));
         shader->set_mat4("model", model);
@@ -56,7 +90,7 @@ namespace app {
         shader->set_mat4("projection", graphics->projection_matrix());
         shader->set_mat4("view", graphics->camera()->view_matrix());
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(0.0f, -2.0f, -10.0f));
+        model           = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
         model           = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
         shader->set_mat4("model", model);
         tree->draw(shader);
