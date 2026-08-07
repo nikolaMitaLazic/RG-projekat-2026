@@ -8,6 +8,10 @@
       "tree": {
         "path": "Tree/model.obj",
         "flip_uvs": true
+      },
+      "road": {
+        "path": "Road/Road.obj",
+        "flip_uvs": true
       }
     }
   },

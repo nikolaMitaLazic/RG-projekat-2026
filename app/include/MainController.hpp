@@ -16,6 +16,8 @@ namespace app {
 
         void draw_tree();
 
+        void draw_road();
+
         void update_camera();
 
         void update() override;
