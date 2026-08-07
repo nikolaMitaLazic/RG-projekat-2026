@@ -5,6 +5,8 @@
 #include <engine/resources/ResourcesController.hpp>
 #include <spdlog/spdlog.h>
 
+#include "GuiController.hpp"
+
 namespace app {
     class MainPlatformEventObserver : public engine::platform::PlatformEventObserver {
     public:
@@ -12,6 +14,8 @@ namespace app {
     };
 
     void MainPlatformEventObserver::on_mouse_move(engine::platform::MousePosition position) {
+        auto gui_controller = engine::core::Controller::get<GuiController>();
+        if (gui_controller->is_enabled()) return;
         auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
         camera->rotate_camera(position.dx, position.dy);
     }
@@ -32,9 +36,11 @@ namespace app {
     }
 
     void MainController::update_camera() {
+        auto gui_controller = engine::core::Controller::get<GuiController>();
+        if (gui_controller->is_enabled()) return;
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
-        auto camera   = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
-        float dt      = platform->dt();
+        auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+        float dt = platform->dt();
         if (platform->key(engine::platform::KEY_W).state() == engine::platform::Key::State::Pressed) {
             camera->move_camera(engine::graphics::Camera::Movement::FORWARD, dt);
         }
@@ -55,20 +61,20 @@ namespace app {
 
     void MainController::draw_hen() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
-        auto platform  = engine::core::Controller::get<engine::platform::PlatformController>();
+        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
 
-        engine::resources::Model *hen     = resources->model("hen");
+        engine::resources::Model *hen = resources->model("hen");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
         shader->set_mat4("view", graphics->camera()->view_matrix());
 
-        float t         = platform->frame_time().current;
+        float t = platform->frame_time().current;
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(-2.0f, 1.75f, -1.0f));
-        model           = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
-        model           = glm::rotate(model, -t, glm::vec3(0.0, 1.0, 0.0));
+        model = glm::translate(model, glm::vec3(-2.0f, 1.75f, -1.0f));
+        model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
+        model = glm::rotate(model, -t, glm::vec3(0.0, 1.0, 0.0));
         shader->set_mat4("model", model);
         hen->draw(shader);
 
@@ -82,32 +88,32 @@ namespace app {
 
     void MainController::draw_tree() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
-        engine::resources::Model *tree    = resources->model("tree");
+        engine::resources::Model *tree = resources->model("tree");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
         shader->set_mat4("view", graphics->camera()->view_matrix());
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(0.0f, 0.5f, -3.0f));
-        model           = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.5f, -3.0f));
+        model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
         shader->set_mat4("model", model);
         tree->draw(shader);
     }
 
     void MainController::draw_road() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics  = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
-        engine::resources::Model *road    = resources->model("road");
+        engine::resources::Model *road = resources->model("road");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         shader->set_mat4("projection", graphics->projection_matrix());
         shader->set_mat4("view", graphics->camera()->view_matrix());
         glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-        model           = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
         shader->set_mat4("model", model);
         road->draw(shader);
     }
