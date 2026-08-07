@@ -118,6 +118,14 @@ namespace app {
         road->draw(shader);
     }
 
+    void draw_skybox() {
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto skybox = resources->skybox("night_skybox");
+        auto shader = resources->shader("skybox");
+        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        graphics->draw_skybox(shader, skybox);
+    }
+
     void MainController::begin_draw() {
         engine::graphics::OpenGL::clear_buffers();
     }
@@ -131,5 +139,6 @@ namespace app {
         draw_hen();
         draw_tree();
         draw_road();
+        draw_skybox();
     }
 }
