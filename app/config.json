@@ -12,6 +12,14 @@
       "road": {
         "path": "Road/Road.obj",
         "flip_uvs": true
+      },
+      "lamp_post": {
+        "path": "LampPost/lamp_post.obj",
+        "flip_uvs": false
+      },
+      "lamp_light": {
+        "path": "LightSphere/light_sphere.obj",
+        "flip_uvs": false
       }
     }
   },

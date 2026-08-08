@@ -17,10 +17,19 @@ namespace app {
             return m_flashlight_enabled;
         }
 
+        glm::vec3 lamp_post_position() const {
+            return m_lamp_post_position;
+        }
+
+        glm::vec3 point_light_position() const {
+            return m_lamp_post_position + glm::vec3(0.0f, 3.34f, 0.0f);
+        }
+
     private:
         void poll_events() override;
 
         bool m_flashlight_enabled = false;
+        glm::vec3 m_lamp_post_position = glm::vec3(3.0f, 0.5f, 2.8f);
     };
 }
 

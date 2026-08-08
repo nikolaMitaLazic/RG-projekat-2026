@@ -110,6 +110,35 @@ namespace app {
         road->draw(shader);
     }
 
+    void MainController::draw_lamp_post() {
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+        auto lighting = engine::core::Controller::get<LightingController>();
+
+        auto lamp_post = resources->model("lamp_post");
+        auto shader = resources->shader("basic");
+        shader->use();
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, lighting->lamp_post_position());
+        model = glm::scale(model, glm::vec3(0.2f));
+        shader->set_mat4("model", model);
+        lamp_post->draw(shader);
+
+        auto lamp_light = resources->model("lamp_light");
+        auto light_shader = resources->shader("light_source");
+        light_shader->use();
+        light_shader->set_mat4("projection", graphics->projection_matrix());
+        light_shader->set_mat4("view", graphics->camera()->view_matrix());
+        light_shader->set_vec3("color", glm::vec3(1.0f, 0.8f, 0.45f));
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lighting->point_light_position());
+        model = glm::scale(model, glm::vec3(0.25f));
+        light_shader->set_mat4("model", model);
+        lamp_light->draw(light_shader);
+    }
+
     void draw_skybox() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto skybox = resources->skybox("night_skybox");
@@ -139,6 +168,7 @@ namespace app {
         draw_hen();
         draw_tree();
         draw_road();
+        draw_lamp_post();
         draw_skybox();
     }
 }

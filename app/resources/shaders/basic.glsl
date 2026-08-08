@@ -51,9 +51,20 @@ struct SpotLight {
     vec3 specular;
 };
 
+struct PointLight {
+    vec3 position;
+    float constant;
+    float linear;
+    float quadratic;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 uniform sampler2D texture_diffuse1;
 uniform DirectionalLight directionalLight;
 uniform SpotLight flashlight;
+uniform PointLight pointLight;
 uniform vec3 viewPosition;
 
 void main() {
@@ -73,11 +84,29 @@ void main() {
 
     vec3 result = ambient + diffuse + specular;
 
+    lightDirection = normalize(pointLight.position - FragPos);
+
+    float distance = length(pointLight.position - FragPos);
+    float attenuation = 1.0 / (pointLight.constant
+        + pointLight.linear * distance
+        + pointLight.quadratic * distance * distance);
+
+    ambient = pointLight.ambient * color;
+
+    diffuseStrength = max(dot(normal, lightDirection), 0.0);
+    diffuse = pointLight.diffuse * diffuseStrength * color;
+
+    reflectedDirection = reflect(-lightDirection, normal);
+    specularStrength = pow(max(dot(viewDirection, reflectedDirection), 0.0), 32.0);
+    specular = pointLight.specular * specularStrength;
+
+    result += (ambient + diffuse + specular) * attenuation;
+
     if (flashlight.enabled) {
         lightDirection = normalize(flashlight.position - FragPos);
 
-        float distance = length(flashlight.position - FragPos);
-        float attenuation = 1.0 / (flashlight.constant
+        distance = length(flashlight.position - FragPos);
+        attenuation = 1.0 / (flashlight.constant
             + flashlight.linear * distance
             + flashlight.quadratic * distance * distance);
 
