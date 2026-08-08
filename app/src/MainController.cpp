@@ -61,14 +61,11 @@ namespace app {
 
     void MainController::draw_hen() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
 
         engine::resources::Model *hen = resources->model("hen");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
-        shader->set_mat4("projection", graphics->projection_matrix());
-        shader->set_mat4("view", graphics->camera()->view_matrix());
 
         float t = platform->frame_time().current;
         glm::mat4 model = glm::mat4(1.0f);
@@ -88,13 +85,10 @@ namespace app {
 
     void MainController::draw_tree() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
         engine::resources::Model *tree = resources->model("tree");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
-        shader->set_mat4("projection", graphics->projection_matrix());
-        shader->set_mat4("view", graphics->camera()->view_matrix());
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.5f, -3.0f));
         model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
@@ -104,13 +98,10 @@ namespace app {
 
     void MainController::draw_road() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
 
         engine::resources::Model *road = resources->model("road");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
-        shader->set_mat4("projection", graphics->projection_matrix());
-        shader->set_mat4("view", graphics->camera()->view_matrix());
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
         model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
@@ -140,6 +131,8 @@ namespace app {
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
         auto shader = resources->shader("basic");
         shader->use();
+        shader->set_mat4("projection", graphics->projection_matrix());
+        shader->set_mat4("view", graphics->camera()->view_matrix());
         shader->set_vec3("directionalLight.direction", glm::vec3(-0.45f, -1.0f, 0.7f));
         shader->set_vec3("directionalLight.ambient", glm::vec3(0.18f, 0.20f, 0.28f));
         shader->set_vec3("directionalLight.diffuse", glm::vec3(0.45f, 0.50f, 0.65f));
