@@ -31,10 +31,15 @@ namespace app {
         if (ImGui::ColorEdit3("Lamp color", &point_light_color.x)) {
             lighting->set_point_light_color(point_light_color);
         }
+        glm::vec3 warning_color = lighting->warning_color();
+        if (ImGui::ColorEdit3("Warning color", &warning_color.x)) {
+            lighting->set_warning_color(warning_color);
+        }
         float flashlight_strength = lighting->flashlight_strength();
         if (ImGui::SliderFloat("Flash power", &flashlight_strength, 0.0f, 2.0f)) {
             lighting->set_flashlight_strength(flashlight_strength);
         }
+        ImGui::Text("C: Trigger warning");
         ImGui::Text("F: Toggle flashlight");
         ImGui::Text("Esc: Close program");
         ImGui::End();

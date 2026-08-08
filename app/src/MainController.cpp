@@ -130,7 +130,7 @@ namespace app {
         light_shader->use();
         light_shader->set_mat4("projection", graphics->projection_matrix());
         light_shader->set_mat4("view", graphics->camera()->view_matrix());
-        light_shader->set_vec3("color", lighting->point_light_color());
+        light_shader->set_vec3("color", lighting->current_point_light_color());
 
         model = glm::mat4(1.0f);
         model = glm::translate(model, lighting->point_light_position());

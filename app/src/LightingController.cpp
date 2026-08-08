@@ -9,11 +9,34 @@ namespace app {
         if (platform->key(engine::platform::KEY_F).state() == engine::platform::Key::State::JustPressed) {
             m_flashlight_enabled = !m_flashlight_enabled;
         }
+        if (platform->key(engine::platform::KEY_C).state() == engine::platform::Key::State::JustPressed
+            && m_warning_state == WarningState::Idle) {
+            m_warning_state = WarningState::Waiting;
+            m_warning_timer = 0.0f;
+        }
+    }
+
+    void LightingController::update() {
+        if (m_warning_state == WarningState::Idle) return;
+
+        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+        m_warning_timer += platform->dt();
+
+        if (m_warning_timer >= 2.0f * WARNING_TRANSITION_DURATION + WARNING_DURATION) {
+            m_warning_state = WarningState::Idle;
+            m_warning_timer = 0.0f;
+        } else if (m_warning_timer >= WARNING_TRANSITION_DURATION + WARNING_DURATION) {
+            m_warning_state = WarningState::Returning;
+        } else if (m_warning_timer >= WARNING_TRANSITION_DURATION) {
+            m_warning_state = WarningState::Active;
+        }
     }
 
     void LightingController::set_lighting_uniforms(const engine::resources::Shader *shader) const {
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
         auto camera = graphics->camera();
+        glm::vec3 point_light_color = current_point_light_color();
+        float point_light_strength = is_warning_active() ? WARNING_STRENGTH : 1.0f;
 
         shader->use();
         shader->set_vec3("directionalLight.direction", glm::vec3(-0.45f, -1.0f, 0.7f));
@@ -26,9 +49,9 @@ namespace app {
         shader->set_float("pointLight.constant", 1.0f);
         shader->set_float("pointLight.linear", 0.09f);
         shader->set_float("pointLight.quadratic", 0.032f);
-        shader->set_vec3("pointLight.ambient", m_point_light_color * 0.05f);
-        shader->set_vec3("pointLight.diffuse", m_point_light_color);
-        shader->set_vec3("pointLight.specular", m_point_light_color * 0.15f);
+        shader->set_vec3("pointLight.ambient", point_light_color * 0.05f * point_light_strength);
+        shader->set_vec3("pointLight.diffuse", point_light_color * point_light_strength);
+        shader->set_vec3("pointLight.specular", point_light_color * 0.15f * point_light_strength);
 
         shader->set_bool("flashlight.enabled", m_flashlight_enabled);
         shader->set_vec3("flashlight.position", camera->Position);
