@@ -24,6 +24,8 @@ namespace app {
         ImGui::Begin("Info");
 
         ImGui::Text("Camera position: (%f, %f, %f)", camera->Position.x, camera->Position.y, camera->Position.z);
+        ImGui::Text("F: Toggle flashlight");
+        ImGui::Text("Esc: Close program");
         ImGui::End();
         graphics->end_gui();
     }

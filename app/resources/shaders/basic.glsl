@@ -37,24 +37,65 @@ struct DirectionalLight {
     vec3 specular;
 };
 
+struct SpotLight {
+    bool enabled;
+    vec3 position;
+    vec3 direction;
+    float innerCutoff;
+    float outerCutoff;
+    float constant;
+    float linear;
+    float quadratic;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 uniform sampler2D texture_diffuse1;
 uniform DirectionalLight directionalLight;
+uniform SpotLight flashlight;
 uniform vec3 viewPosition;
 
 void main() {
     vec3 color = texture(texture_diffuse1, TexCoords).rgb;
     vec3 normal = normalize(Normal);
-    vec3 lightDirection = normalize(-directionalLight.direction);
+    vec3 viewDirection = normalize(viewPosition - FragPos);
 
+    vec3 lightDirection = normalize(-directionalLight.direction);
     vec3 ambient = directionalLight.ambient * color;
 
     float diffuseStrength = max(dot(normal, lightDirection), 0.0);
     vec3 diffuse = directionalLight.diffuse * diffuseStrength * color;
 
-    vec3 viewDirection = normalize(viewPosition - FragPos);
     vec3 reflectedDirection = reflect(-lightDirection, normal);
     float specularStrength = pow(max(dot(viewDirection, reflectedDirection), 0.0), 32.0);
     vec3 specular = directionalLight.specular * specularStrength;
 
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+    vec3 result = ambient + diffuse + specular;
+
+    if (flashlight.enabled) {
+        lightDirection = normalize(flashlight.position - FragPos);
+
+        float distance = length(flashlight.position - FragPos);
+        float attenuation = 1.0 / (flashlight.constant
+            + flashlight.linear * distance
+            + flashlight.quadratic * distance * distance);
+
+        float theta = dot(lightDirection, normalize(-flashlight.direction));
+        float epsilon = flashlight.innerCutoff - flashlight.outerCutoff;
+        float intensity = clamp((theta - flashlight.outerCutoff) / epsilon, 0.0, 1.0);
+
+        ambient = flashlight.ambient * color;
+
+        diffuseStrength = max(dot(normal, lightDirection), 0.0);
+        diffuse = flashlight.diffuse * diffuseStrength * color;
+
+        reflectedDirection = reflect(-lightDirection, normal);
+        specularStrength = pow(max(dot(viewDirection, reflectedDirection), 0.0), 32.0);
+        specular = flashlight.specular * specularStrength;
+
+        result += (ambient + diffuse + specular) * attenuation * intensity;
+    }
+
+    FragColor = vec4(result, 1.0);
 }

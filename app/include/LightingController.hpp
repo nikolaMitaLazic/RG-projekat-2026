@@ -12,6 +12,15 @@ namespace app {
         }
 
         void set_lighting_uniforms(const engine::resources::Shader *shader) const;
+
+        bool is_flashlight_enabled() const {
+            return m_flashlight_enabled;
+        }
+
+    private:
+        void poll_events() override;
+
+        bool m_flashlight_enabled = false;
     };
 }
 
