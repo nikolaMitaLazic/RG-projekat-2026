@@ -70,14 +70,14 @@ namespace app {
 
         float t = platform->frame_time().current;
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-2.0f, 1.75f, -1.0f));
+        model = glm::translate(model, glm::vec3(-2.0f, -0.25f, -1.0f));
         model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
         model = glm::rotate(model, -t, glm::vec3(0.0, 1.0, 0.0));
         shader->set_mat4("model", model);
         hen->draw(shader);
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 1.75f, 1.0f));
+        model = glm::translate(model, glm::vec3(2.0f, -0.25f, 1.0f));
         model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
         model = glm::rotate(model, t, glm::vec3(0.0, 2.0, 0.0));
         shader->set_mat4("model", model);
@@ -91,7 +91,7 @@ namespace app {
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.5f, -3.0f));
+        model = glm::translate(model, glm::vec3(0.0f, -1.5f, -3.0f));
         model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
         shader->set_mat4("model", model);
         tree->draw(shader);
@@ -104,7 +104,7 @@ namespace app {
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+        model = glm::translate(model, glm::vec3(0.0f, -2.0f, -1.0f));
         model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
         shader->set_mat4("model", model);
         road->draw(shader);

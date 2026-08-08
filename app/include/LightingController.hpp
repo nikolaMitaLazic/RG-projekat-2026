@@ -29,7 +29,7 @@ namespace app {
         void poll_events() override;
 
         bool m_flashlight_enabled = false;
-        glm::vec3 m_lamp_post_position = glm::vec3(3.0f, 0.5f, 2.8f);
+        glm::vec3 m_lamp_post_position = glm::vec3(3.0f, -1.5f, 2.8f);
     };
 }
 
