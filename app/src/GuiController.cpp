@@ -1,7 +1,3 @@
-//
-// Created by nikola on 8/7/26.
-//
-
 #include "GuiController.hpp"
 
 #include "imgui.h"

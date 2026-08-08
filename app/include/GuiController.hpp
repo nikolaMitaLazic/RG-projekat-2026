@@ -1,7 +1,3 @@
-//
-// Created by nikola on 8/7/26.
-//
-
 #ifndef MATF_RG_PROJECT_GUICONTROLLER_H
 #define MATF_RG_PROJECT_GUICONTROLLER_H
 #include "engine/core/Controller.hpp"
