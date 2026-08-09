@@ -39,7 +39,10 @@ namespace app {
         if (ImGui::SliderFloat("Flash power", &flashlight_strength, 0.0f, 2.0f)) {
             lighting->set_flashlight_strength(flashlight_strength);
         }
-        ImGui::Text("C: Trigger warning");
+        if (lighting->is_crossing_in_progress())
+            ImGui::Text("Crossing in progress...");
+        else
+            ImGui::Text("C: Trigger crossing");
         ImGui::Text("F: Toggle flashlight");
         ImGui::Text("Esc: Close program");
         ImGui::End();

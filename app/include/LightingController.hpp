@@ -61,6 +61,18 @@ namespace app {
             return m_warning_state == WarningState::Active;
         }
 
+        bool is_crossing_in_progress() const {
+            return m_warning_state != WarningState::Idle;
+        }
+
+        float warning_active_progress() const;
+
+        float warning_returning_progress() const;
+
+        bool hens_crossed() const {
+            return m_hens_crossed;
+        }
+
     private:
         enum class WarningState {
             Idle,
@@ -87,6 +99,7 @@ namespace app {
         glm::vec3 m_warning_color = glm::vec3(1.0f, 0.1f, 0.0f);
         WarningState m_warning_state = WarningState::Idle;
         float m_warning_timer = 0.0f;
+        bool m_hens_crossed = false;
     };
 }
 

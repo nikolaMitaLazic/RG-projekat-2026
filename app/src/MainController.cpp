@@ -62,24 +62,41 @@ namespace app {
 
     void MainController::draw_hens() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-        auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+        auto lighting = engine::core::Controller::get<LightingController>();
 
         engine::resources::Model *hen = resources->model("hen");
         engine::resources::Shader *shader = resources->shader("basic");
         shader->use();
 
-        float t = platform->frame_time().current;
+        bool hens_crossed = lighting->hens_crossed();
+        float crossing_progress = lighting->warning_active_progress();
+        float turning_progress = lighting->warning_returning_progress();
+        float negative_z_roadside = -6.5f;
+        float positive_z_roadside = 4.7f;
+
+        float first_start_z = hens_crossed ? positive_z_roadside : negative_z_roadside;
+        float first_end_z = hens_crossed ? negative_z_roadside : positive_z_roadside;
+        glm::vec3 first_start = glm::vec3(-2.0f, -0.25f, first_start_z);
+        glm::vec3 first_end = glm::vec3(-2.0f, -0.25f, first_end_z);
+        glm::vec3 first_position = glm::mix(first_start, first_end, crossing_progress);
+        float first_rotation = glm::radians(180.0f) * ((hens_crossed ? 1.0f : 0.0f) + turning_progress);
+
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-2.0f, -0.25f, -1.0f));
-        model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
-        model = glm::rotate(model, -t, glm::vec3(0.0, 1.0, 0.0));
+        model = glm::translate(model, first_position);
+        model = glm::rotate(model, first_rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.025f));
         shader->set_mat4("model", model);
         hen->draw(shader);
 
+        glm::vec3 second_start = glm::vec3(2.0f, -0.25f, first_end_z);
+        glm::vec3 second_end = glm::vec3(2.0f, -0.25f, first_start_z);
+        glm::vec3 second_position = glm::mix(second_start, second_end, crossing_progress);
+        float second_rotation = glm::radians(180.0f) * ((hens_crossed ? 0.0f : 1.0f) + turning_progress);
+
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, -0.25f, 1.0f));
-        model = glm::scale(model, glm::vec3(0.025f, 0.025f, 0.025f));
-        model = glm::rotate(model, t, glm::vec3(0.0, 2.0, 0.0));
+        model = glm::translate(model, second_position);
+        model = glm::rotate(model, second_rotation, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.025f));
         shader->set_mat4("model", model);
         hen->draw(shader);
     }

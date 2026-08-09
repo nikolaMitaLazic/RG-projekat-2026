@@ -1,4 +1,5 @@
 #include <LightingController.hpp>
+#include <algorithm>
 #include <engine/graphics/GraphicsController.hpp>
 #include <engine/platform/PlatformController.hpp>
 #include <engine/resources/Shader.hpp>
@@ -26,11 +27,21 @@ namespace app {
         if (m_warning_timer >= 2.0f * WARNING_TRANSITION_DURATION + WARNING_DURATION) {
             m_warning_state = WarningState::Idle;
             m_warning_timer = 0.0f;
+            m_hens_crossed = !m_hens_crossed;
         } else if (m_warning_timer >= WARNING_TRANSITION_DURATION + WARNING_DURATION) {
             m_warning_state = WarningState::Returning;
         } else if (m_warning_timer >= WARNING_TRANSITION_DURATION) {
             m_warning_state = WarningState::Active;
         }
+    }
+
+    float LightingController::warning_active_progress() const {
+        return std::clamp((m_warning_timer - WARNING_TRANSITION_DURATION) / WARNING_DURATION, 0.0f, 1.0f);
+    }
+
+    float LightingController::warning_returning_progress() const {
+        float returning_start = WARNING_TRANSITION_DURATION + WARNING_DURATION;
+        return std::clamp((m_warning_timer - returning_start) / WARNING_TRANSITION_DURATION, 0.0f, 1.0f);
     }
 
     void LightingController::set_lighting_uniforms(const engine::resources::Shader *shader) const {
