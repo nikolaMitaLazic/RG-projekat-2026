@@ -10,7 +10,7 @@ namespace app {
 
         void draw_hen();
 
-        void draw_tree();
+        void draw_forest();
 
         void draw_road();
 

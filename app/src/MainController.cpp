@@ -84,17 +84,36 @@ namespace app {
         hen->draw(shader);
     }
 
-    void MainController::draw_tree() {
+    void MainController::draw_forest() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
 
-        engine::resources::Model *tree = resources->model("tree");
-        engine::resources::Shader *shader = resources->shader("basic");
+        auto tree = resources->model("tree");
+        auto shader = resources->shader("basic");
         shader->use();
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.5f, -3.0f));
-        model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
-        shader->set_mat4("model", model);
-        tree->draw(shader);
+
+        struct TreeTransform {
+            glm::vec3 position;
+            float scale;
+            float rotation;
+        };
+
+        const TreeTransform tree_transforms[] = {
+                {glm::vec3(-6.5f, -1.35f, -7.5f), 0.015f, -25.0f},
+                {glm::vec3(0.0f, -1.35f, -8.0f), 0.013f, 35.0f},
+                {glm::vec3(6.5f, -1.35f, -7.0f), 0.017f, 70.0f},
+                {glm::vec3(-7.0f, -1.35f, 6.0f), 0.014f, -55.0f},
+                {glm::vec3(0.5f, -1.35f, 7.0f), 0.016f, 15.0f},
+                {glm::vec3(7.0f, -1.35f, 6.0f), 0.013f, 100.0f},
+        };
+
+        for (const auto &tree_transform: tree_transforms) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, tree_transform.position);
+            model = glm::rotate(model, glm::radians(tree_transform.rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(tree_transform.scale));
+            shader->set_mat4("model", model);
+            tree->draw(shader);
+        }
     }
 
     void MainController::draw_road() {
@@ -180,7 +199,7 @@ namespace app {
         engine::core::Controller::get<LightingController>()->set_lighting_uniforms(shader);
 
         draw_hen();
-        draw_tree();
+        draw_forest();
         draw_grass();
         draw_road();
         draw_lamp_post();
