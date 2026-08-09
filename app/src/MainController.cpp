@@ -201,10 +201,6 @@ namespace app {
         graphics->draw_skybox(shader, skybox);
     }
 
-    void MainController::begin_draw() {
-        engine::graphics::OpenGL::clear_buffers();
-    }
-
     void MainController::end_draw() {
         auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
         platform->swap_buffers();
