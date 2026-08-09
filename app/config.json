@@ -13,6 +13,10 @@
         "path": "Road/Road.obj",
         "flip_uvs": true
       },
+      "grass": {
+        "path": "GrassPlane/grass_plane.obj",
+        "flip_uvs": false
+      },
       "lamp_post": {
         "path": "LampPost/lamp_post.obj",
         "flip_uvs": false

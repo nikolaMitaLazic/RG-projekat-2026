@@ -110,6 +110,20 @@ namespace app {
         road->draw(shader);
     }
 
+    void MainController::draw_grass() {
+        auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+
+        auto grass = resources->model("grass");
+        auto shader = resources->shader("basic");
+        shader->use();
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -1.35f, -1.0f));
+        model = glm::scale(model, glm::vec3(20.0f, 1.0f, 20.0f));
+        shader->set_mat4("model", model);
+        grass->draw(shader);
+    }
+
     void MainController::draw_lamp_post() {
         auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
@@ -167,6 +181,7 @@ namespace app {
 
         draw_hen();
         draw_tree();
+        draw_grass();
         draw_road();
         draw_lamp_post();
         draw_skybox();
