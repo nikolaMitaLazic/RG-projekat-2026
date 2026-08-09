@@ -2,6 +2,7 @@
 #include <engine/graphics/GraphicsController.hpp>
 #include <engine/platform/PlatformController.hpp>
 #include <engine/resources/Shader.hpp>
+#include <string>
 
 namespace app {
     void LightingController::poll_events() {
@@ -45,13 +46,16 @@ namespace app {
         shader->set_vec3("directionalLight.specular", glm::vec3(0.05f, 0.06f, 0.08f));
         shader->set_vec3("viewPosition", camera->Position);
 
-        shader->set_vec3("pointLight.position", point_light_position());
-        shader->set_float("pointLight.constant", 1.0f);
-        shader->set_float("pointLight.linear", 0.09f);
-        shader->set_float("pointLight.quadratic", 0.032f);
-        shader->set_vec3("pointLight.ambient", point_light_color * 0.05f * point_light_strength);
-        shader->set_vec3("pointLight.diffuse", point_light_color * point_light_strength);
-        shader->set_vec3("pointLight.specular", point_light_color * 0.15f * point_light_strength);
+        for (std::size_t i = 0; i < m_lamp_post_positions.size(); i++) {
+            std::string uniform = "pointLights[" + std::to_string(i) + "].";
+            shader->set_vec3(uniform + "position", point_light_position(m_lamp_post_positions[i]));
+            shader->set_float(uniform + "constant", 1.0f);
+            shader->set_float(uniform + "linear", 0.09f);
+            shader->set_float(uniform + "quadratic", 0.032f);
+            shader->set_vec3(uniform + "ambient", point_light_color * 0.05f * point_light_strength);
+            shader->set_vec3(uniform + "diffuse", point_light_color * point_light_strength);
+            shader->set_vec3(uniform + "specular", point_light_color * 0.15f * point_light_strength);
+        }
 
         shader->set_bool("flashlight.enabled", m_flashlight_enabled);
         shader->set_vec3("flashlight.position", camera->Position);

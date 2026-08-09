@@ -3,6 +3,7 @@
 
 #include <engine/core/Controller.hpp>
 #include <engine/resources/Shader.hpp>
+#include <vector>
 
 namespace app {
     class LightingController : public engine::core::Controller {
@@ -25,12 +26,12 @@ namespace app {
             m_flashlight_strength = strength;
         }
 
-        glm::vec3 lamp_post_position() const {
-            return m_lamp_post_position;
+        const std::vector<glm::vec3> &lamp_post_positions() const {
+            return m_lamp_post_positions;
         }
 
-        glm::vec3 point_light_position() const {
-            return m_lamp_post_position + glm::vec3(0.0f, 3.34f, 0.0f);
+        glm::vec3 point_light_position(const glm::vec3 &lamp_post_position) const {
+            return lamp_post_position + glm::vec3(0.0f, 3.34f, 0.0f);
         }
 
         glm::vec3 point_light_color() const {
@@ -78,7 +79,10 @@ namespace app {
 
         bool m_flashlight_enabled = false;
         float m_flashlight_strength = 1.0f;
-        glm::vec3 m_lamp_post_position = glm::vec3(3.0f, -1.5f, 2.8f);
+        std::vector<glm::vec3> m_lamp_post_positions = {
+                glm::vec3(3.0f, -1.5f, 2.8f),
+                glm::vec3(-3.0f, -1.5f, -4.8f),
+        };
         glm::vec3 m_point_light_color = glm::vec3(1.0f, 0.8f, 0.45f);
         glm::vec3 m_warning_color = glm::vec3(1.0f, 0.1f, 0.0f);
         WarningState m_warning_state = WarningState::Idle;

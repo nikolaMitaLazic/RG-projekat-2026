@@ -8,7 +8,7 @@ namespace app {
 
         bool loop() override;
 
-        void draw_hen();
+        void draw_hens();
 
         void draw_forest();
 
@@ -16,7 +16,7 @@ namespace app {
 
         void draw_grass();
 
-        void draw_lamp_post();
+        void draw_lamp_posts();
 
         void update_camera();
 
