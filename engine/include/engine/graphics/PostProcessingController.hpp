@@ -41,8 +41,6 @@ namespace engine::graphics {
          */
         void present(const resources::Shader *shader) const;
 
-        void draw() override = 0;
-
         /**
          * @brief Destroys the framebuffer attachments and screen quad.
          */
