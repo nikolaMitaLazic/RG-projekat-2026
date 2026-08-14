@@ -2,12 +2,16 @@
 #include <glad/glad.h>
 // clang-format on
 #include <engine/graphics/OpenGL.hpp>
-#include <engine/graphics/PostProcessor.hpp>
+#include <engine/graphics/PostProcessingController.hpp>
+#include <engine/platform/PlatformController.hpp>
 #include <engine/resources/Shader.hpp>
 #include <engine/util/Errors.hpp>
 
 namespace engine::graphics {
-void PostProcessor::initialize(int width, int height) {
+void PostProcessingController::initialize() {
+    auto platform = core::Controller::get<platform::PlatformController>();
+    int width = platform->window()->width();
+    int height = platform->window()->height();
     RG_GUARANTEE(width > 0 && height > 0, "Post-processing framebuffer dimensions must be positive.");
 
     CHECKED_GL_CALL(glGenFramebuffers, 1, &m_framebuffer);
@@ -34,7 +38,17 @@ void PostProcessor::initialize(int width, int height) {
     resize(width, height);
 }
 
-void PostProcessor::resize(int width, int height) {
+void PostProcessingController::begin_draw() {
+    auto platform = core::Controller::get<platform::PlatformController>();
+    resize(platform->window()->width(), platform->window()->height());
+    begin_capture();
+}
+
+void PostProcessingController::terminate() {
+    destroy();
+}
+
+void PostProcessingController::resize(int width, int height) {
     if (width <= 0 || height <= 0 || (width == m_width && height == m_height)) return;
 
     m_width = width;
@@ -58,14 +72,14 @@ void PostProcessor::resize(int width, int height) {
                  "Post-processing framebuffer is incomplete. OpenGL status: {}", framebuffer_status);
 }
 
-void PostProcessor::begin_capture() const {
+void PostProcessingController::begin_capture() const {
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, m_framebuffer);
     CHECKED_GL_CALL(glViewport, 0, 0, m_width, m_height);
     CHECKED_GL_CALL(glEnable, GL_DEPTH_TEST);
     OpenGL::clear_buffers();
 }
 
-void PostProcessor::present(const resources::Shader *shader) const {
+void PostProcessingController::present(const resources::Shader *shader) const {
     CHECKED_GL_CALL(glBindFramebuffer, GL_FRAMEBUFFER, 0);
     CHECKED_GL_CALL(glViewport, 0, 0, m_width, m_height);
     CHECKED_GL_CALL(glDisable, GL_DEPTH_TEST);
@@ -82,7 +96,7 @@ void PostProcessor::present(const resources::Shader *shader) const {
     CHECKED_GL_CALL(glEnable, GL_DEPTH_TEST);
 }
 
-void PostProcessor::destroy() {
+void PostProcessingController::destroy() {
     if (m_quad_vbo != 0) CHECKED_GL_CALL(glDeleteBuffers, 1, &m_quad_vbo);
     if (m_quad_vao != 0) CHECKED_GL_CALL(glDeleteVertexArrays, 1, &m_quad_vao);
     if (m_depth_stencil_renderbuffer != 0)
@@ -99,7 +113,7 @@ void PostProcessor::destroy() {
     m_height = 0;
 }
 
-void PostProcessor::initialize_screen_quad() {
+void PostProcessingController::initialize_screen_quad() {
     // clang-format off
     const float quad_vertices[] = {
             // position      // texture coordinates

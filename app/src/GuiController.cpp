@@ -5,7 +5,7 @@
 #include "engine/platform/PlatformController.hpp"
 
 #include "LightingController.hpp"
-#include "PostProcessingController.hpp"
+#include "VignetteController.hpp"
 
 namespace app {
     void GuiController::initialize() {
@@ -22,7 +22,7 @@ namespace app {
     void GuiController::draw() {
         auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
         auto lighting = engine::core::Controller::get<LightingController>();
-        auto post_processing = engine::core::Controller::get<PostProcessingController>();
+        auto vignette = engine::core::Controller::get<VignetteController>();
         auto camera = graphics->camera();
         graphics->begin_gui();
 
@@ -41,9 +41,9 @@ namespace app {
         if (ImGui::SliderFloat("Flash power", &flashlight_strength, 0.0f, 2.0f)) {
             lighting->set_flashlight_strength(flashlight_strength);
         }
-        float vignette_strength = post_processing->vignette_strength();
+        float vignette_strength = vignette->vignette_strength();
         if (ImGui::SliderFloat("Vignette strength", &vignette_strength, 0.0f, 1.0f)) {
-            post_processing->set_vignette_strength(vignette_strength);
+            vignette->set_vignette_strength(vignette_strength);
         }
         if (lighting->is_crossing_in_progress())
             ImGui::Text("Crossing in progress...");
