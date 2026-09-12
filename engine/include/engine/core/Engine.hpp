@@ -17,6 +17,7 @@
 
 #include <engine/graphics/Camera.hpp>
 #include <engine/graphics/OpenGL.hpp>
+#include <engine/graphics/PostProcessingController.hpp>
 
 #include <engine/util/ArgParser.hpp>
 #include <engine/util/Configuration.hpp>
